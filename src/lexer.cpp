@@ -1,5 +1,7 @@
 #include <lexer.hpp>
 
+#include <cstdint>
+
 static bool is_text_char(char c) {
     return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
 }
@@ -40,14 +42,23 @@ std::vector<std::vector<std::string>> calc::get_tokens(std::ifstream& input) {
 
             std::string first = line.substr(0, sp);
             trim(first);
+            if (!is_text(first)) throw std::runtime_error("Unknown syntax in line '" + line + "'.");
 
             std::string second = line.substr(sp + 1);
             trim(second);
 
-            if (!is_text(first) || !is_text(second)) throw std::runtime_error("Unknown syntax in line '" + line + "'.");
+            std::string value;
+
+            if (second[0] == '"' && second[second.length()-1] == '"') {
+                value.push_back(static_cast<unsigned char>(static_cast<uint8_t>(second.length())));
+                value += std::move(second.substr(1, second.length() - 2));
+            } else if (is_text(second)) {
+                value.push_back('\0');
+                value += std::move(second);
+            } else throw std::runtime_error("Unknown syntax in line '" + line + "'.");
 
             tokens.push_back(std::move(first));
-            tokens.push_back(std::move(second));
+            tokens.push_back(std::move(value));
         } else {
             std::string name = line.substr(0, sep);
             trim(name);

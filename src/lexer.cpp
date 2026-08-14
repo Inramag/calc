@@ -47,18 +47,43 @@ std::vector<std::vector<std::string>> calc::get_tokens(std::ifstream& input) {
             std::string second = line.substr(sp + 1);
             trim(second);
 
+            size_t end;
             std::string value;
 
-            if (second[0] == '"' && second[second.length()-1] == '"') {
-                value.push_back(static_cast<unsigned char>(static_cast<uint8_t>(second.length())));
-                value += std::move(second.substr(1, second.length() - 2));
-            } else if (is_text(second)) {
+            if (second[0] == '"') {
+                end = second.find('"', 1);
+                if (end == std::string::npos) throw std::runtime_error("Unknown syntax in line '" + line + "'.");
+
+                value.push_back(' ');
+                value += std::move(second.substr(1, end - 1));
+                if (value.length() - 1 == 0) throw std::runtime_error("Empty string in line '" + line + "'.");
+                value[0] = static_cast<unsigned char>(static_cast<uint8_t>(value.length()-1));
+            } else {
+                end = second.find(' ');
+
                 value.push_back('\0');
-                value += std::move(second);
-            } else throw std::runtime_error("Unknown syntax in line '" + line + "'.");
+
+                std::string tmp;
+
+                if (end == std::string::npos) tmp = second;
+                else tmp = second.substr(0, end);
+
+                if (!is_text(tmp)) throw std::runtime_error("Invalid name format '" + tmp + "' in line '" + line + "'.");
+
+                value += std::move(tmp);
+            }
 
             tokens.push_back(std::move(first));
             tokens.push_back(std::move(value));
+
+            if (end != std::string::npos) {
+                std::string flag = second.substr(end + 1);
+                trim(flag);
+                if (!flag.empty()) {
+                    if (!is_text(flag)) throw std::runtime_error("Unknown syntax in line '" + line + "'.");
+                    tokens.push_back(std::move(flag));
+                }
+            }
         } else {
             std::string name = line.substr(0, sep);
             trim(name);

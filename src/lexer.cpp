@@ -103,7 +103,7 @@ std::vector<std::vector<std::string>> calc::get_tokens(std::ifstream& input) {
             if (op == std::string::npos) {
                 try {
                     size_t pos;
-                    std::stold(value, &pos);
+                    std::stof(value, &pos);
                     if (pos != value.length())
                         if (!is_text(value)) throw std::runtime_error("invalid value '" + value + "'.");
                 } catch (const std::invalid_argument&) {
@@ -117,7 +117,7 @@ std::vector<std::vector<std::string>> calc::get_tokens(std::ifstream& input) {
 
                 try {
                     size_t pos;
-                    std::stold(first, &pos);
+                    std::stof(first, &pos);
                     if (pos != first.length())
                         if (!is_text(first)) throw std::runtime_error("invalid first value '" + first + "'.");
                 } catch (const std::invalid_argument&) {
@@ -133,7 +133,7 @@ std::vector<std::vector<std::string>> calc::get_tokens(std::ifstream& input) {
 
                 try {
                     size_t pos;
-                    std::stold(second, &pos);
+                    std::stof(second, &pos);
                     if (pos != second.length())
                         if (!is_text(second)) throw std::runtime_error("invalid second value '" + second + "'.");
                 } catch (const std::invalid_argument&) {

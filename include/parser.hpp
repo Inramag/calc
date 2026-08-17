@@ -6,5 +6,5 @@
 #include <vector>
 
 namespace calc {
-    void get_instructions(const std::vector<std::vector<std::string>>& tokens, std::vector<std::string>& vars, std::vector<Instruction>& instructions);
+    void get_instructions(std::vector<std::string>& tokens, std::vector<std::string>& vars, std::vector<Instruction>& instructions);
 }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 
 #include <lexer.hpp>
@@ -10,25 +11,24 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::string input = argv[1];
-    std::string output;
+    std::filesystem::path input = argv[1], output;
 
     if (argc == 2) {
         output = input;
-        output.replace(output.size() - 5, 5, ".bcalc");
+        output.replace_extension(".bcalc");
     } else {
         output = argv[2];
     }
 
     std::ifstream inp(input);
     if (!inp) {
-        std::cerr << "Unable to open input file '" + input + "'.";
+        std::cerr << "Unable to open input file '" + input.string() + "'.\n";
         return 1;
     }
 
     std::ofstream file(output, std::ios::binary);
     if (!file) {
-        std::cerr << "Unable to open output file '" + output + "'.\n";
+        std::cerr << "Unable to open output file '" + output.string() + "'.\n";
         return 1;
     }
 
